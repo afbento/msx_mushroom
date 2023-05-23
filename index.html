@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+	<body>
+		<canvas id="c2d" ></canvas>  
+	
+		<script type="text/javascript">
+
+			var canvas = document.getElementById("c2d");
+			canvas.width = 256;
+            canvas.height = 192;
+			var ctx = canvas.getContext("2d");
+					
+			const idata=ctx.createImageData(256,192);
+			const pxdata=idata.data;
+						
+			var pset=function(x,y,c) {
+				k=(Math.floor(y)*256+Math.floor(x))*4;
+				pxdata[k]=c;
+				pxdata[k+1]=c;
+				pxdata[k+2]=c;
+				pxdata[k+3]=255;
+			}
+	
+			var cogumelo=function(onda,pov,altura) {
+				for(b=0;b<127;b++) {
+					x4=b*b;m=-128;a=Math.sqrt(16384-x4);
+					for(i=-a;i<a;i+=2) {
+						r=Math.sqrt(x4+i*i)/128;f=Math.cos(onda*r)*(1-r)*2;y=i/pov+f*altura;
+						if(y>m) {m=y;y=84+y;x=128+b;pset(x,191-y,255);x=128-b;pset(x,191-y,255);}
+					}	
+				}
+			}
+						
+			t=1;tt=0.1;
+			p=1;pp=0.03;
+			at=10;aa=0.1;
+						
+			var animate = function(time) {
+				
+				for(i=0;i<256;i++) for(j=0;j<192;j++) pset(i,j,0);
+				cogumelo(t,p,at);
+				t=t+tt;
+				if((t>50)||(t<1)) tt=-tt;
+				p=p+pp;
+				if((p>6)||(p<1)) pp=-pp;
+				at=at+aa;
+				if((at>60)||(at<10)) aa=-aa;
+				ctx.putImageData(idata, 0, 0);
+				window.requestAnimationFrame(animate);
+			}
+			animate(0);
+		
+		</script>
+	</body>
+</html>
